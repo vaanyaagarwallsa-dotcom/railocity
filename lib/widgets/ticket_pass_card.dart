@@ -26,16 +26,9 @@ class TicketPassCard extends StatelessWidget {
       container: true,
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(22),
-          border: Border.all(color: AppColors.borderHighlight, width: 1),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.35),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant, width: 1),
         ),
         child: Column(
           children: [
@@ -46,10 +39,10 @@ class TicketPassCard extends StatelessWidget {
                 vertical: AppSpacing.sm,
               ),
               decoration: const BoxDecoration(
-                gradient: AppColors.primaryGradient,
+                color: AppColors.primary,
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(22),
-                  topRight: Radius.circular(22),
+                  topLeft: Radius.circular(14),
+                  topRight: Radius.circular(14),
                 ),
               ),
               child: Row(
@@ -81,22 +74,15 @@ class TicketPassCard extends StatelessWidget {
                     ],
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 3,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.25),
+                      color: Colors.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(
-                          Icons.check_circle_outline_rounded,
-                          size: 11,
-                          color: Colors.white,
-                        ),
+                        const Icon(Icons.check_circle_outline_rounded, size: 11, color: Colors.white),
                         const SizedBox(width: 4),
                         Text(
                           booking.status,
@@ -104,7 +90,6 @@ class TicketPassCard extends StatelessWidget {
                             color: Colors.white,
                             fontSize: 10,
                             fontWeight: FontWeight.w800,
-                            letterSpacing: 0.5,
                           ),
                         ),
                       ],
@@ -114,262 +99,156 @@ class TicketPassCard extends StatelessWidget {
               ),
             ),
 
-            // 2. MAIN JOURNEY DETAILS
+            // 2. MAIN BODY
             Padding(
               padding: const EdgeInsets.all(AppSpacing.md),
               child: Column(
                 children: [
-                  // Station to Station row
+                  // Station Row
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Source
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              booking.sourceStation.code,
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: -0.5,
-                                color: AppColors.textPrimary,
-                              ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            booking.sourceStation.code,
+                            style: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w900,
+                              color: AppColors.primary,
                             ),
-                            Text(
-                              booking.sourceStation.name,
-                              style: const TextStyle(
-                                fontSize: 11,
-                                color: AppColors.textSecondary,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              booking.departureTime,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w800,
-                                color: AppColors.secondary,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                          Text(
+                            booking.sourceStation.name,
+                            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            booking.departureTime,
+                            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800),
+                          ),
+                        ],
                       ),
-
-                      // Train Icon & Date
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Column(
-                          children: [
-                            const Icon(
-                              Icons.arrow_forward_rounded,
-                              color: AppColors.textMuted,
-                              size: 18,
+                      Column(
+                        children: [
+                          const Icon(Icons.arrow_forward_rounded, color: AppColors.primary, size: 18),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Plat ${booking.platform}',
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                             ),
-                            const SizedBox(height: 2),
-                            Text(
-                              dateFormat.format(booking.travelDate),
-                              style: const TextStyle(
-                                fontSize: 10,
-                                color: AppColors.textMuted,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-
-                      // Destination
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              booking.destinationStation.code,
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: -0.5,
-                                color: AppColors.textPrimary,
-                              ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            booking.destinationStation.code,
+                            style: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w900,
+                              color: AppColors.primary,
                             ),
-                            Text(
-                              booking.destinationStation.name,
-                              style: const TextStyle(
-                                fontSize: 11,
-                                color: AppColors.textSecondary,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              booking.arrivalTime,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w800,
-                                color: AppColors.textPrimary,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                          Text(
+                            booking.destinationStation.name,
+                            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            booking.arrivalTime,
+                            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800),
+                          ),
+                        ],
                       ),
                     ],
                   ),
 
                   const SizedBox(height: AppSpacing.md),
+                  const Divider(height: 1),
+                  const SizedBox(height: AppSpacing.sm),
 
-                  // Tear-off cutouts & dashed line
-                  _buildTearOffSeparator(),
-
-                  const SizedBox(height: AppSpacing.md),
-
-                  // 3. PASSENGER & BERTH INFO
+                  // Coach, Seat, Class, Passenger Row
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _buildInfoBlock(
-                        'PASSENGER',
-                        '${booking.passengerName} (${booking.passengerAge})',
-                      ),
-                      _buildInfoBlock(
-                        'CLASS',
-                        booking.seatClass,
-                      ),
-                      _buildInfoBlock(
-                        'COACH / SEAT',
-                        '${booking.coach} - ${booking.seatNumber}',
-                        isHighlighted: true,
-                      ),
-                      _buildInfoBlock(
-                        'BERTH',
-                        booking.berthType,
-                      ),
+                      _buildInfoBlock(context, 'COACH', booking.coach),
+                      _buildInfoBlock(context, 'SEAT', booking.seatNumber),
+                      _buildInfoBlock(context, 'BERTH', booking.berthType),
+                      _buildInfoBlock(context, 'CLASS', booking.seatClass),
                     ],
                   ),
 
-                  const SizedBox(height: AppSpacing.md),
+                  const SizedBox(height: AppSpacing.sm),
 
-                  // 4. PNR CHUNKED BOX
+                  // PNR Copy Strip
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.sm,
-                      vertical: 6,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
-                      color: AppColors.surfaceContainerLow,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: AppColors.border),
+                      color: Theme.of(context).colorScheme.surfaceContainerLow,
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            const Text(
-                              'PNR: ',
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: AppColors.textMuted,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              booking.pnrChunked,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w800,
-                                color: AppColors.textPrimary,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                          ],
+                        const Text(
+                          'PNR: ',
+                          style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: AppColors.primary),
                         ),
+                        Text(
+                          booking.pnrChunked,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                        const Spacer(),
                         InkWell(
                           onTap: () {
                             Clipboard.setData(ClipboardData(text: booking.pnr));
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('PNR copied to clipboard!'),
+                                content: Text('PNR copied to clipboard'),
                                 duration: Duration(seconds: 1),
                               ),
                             );
                           },
-                          child: Row(
-                            children: const [
-                              Icon(
-                                Icons.copy_rounded,
-                                size: 12,
-                                color: AppColors.secondary,
-                              ),
-                              SizedBox(width: 4),
-                              Text(
-                                'Copy',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: AppColors.secondary,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
+                          child: const Icon(Icons.copy_rounded, size: 14, color: AppColors.primary),
                         ),
                       ],
                     ),
                   ),
 
-                  const SizedBox(height: AppSpacing.md),
+                  const SizedBox(height: AppSpacing.sm),
 
-                  // 5. ACTION BUTTONS
+                  // Actions: Track & Cancel
                   Row(
                     children: [
+                      if (onCancel != null)
+                        TextButton(
+                          onPressed: onCancel,
+                          style: TextButton.styleFrom(
+                            foregroundColor: AppColors.criticalRed,
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                          ),
+                          child: const Text('Cancel Ticket', style: TextStyle(fontSize: 11)),
+                        ),
+                      const Spacer(),
                       if (onTrackTrain != null)
-                        Expanded(
-                          flex: 2,
-                          child: ElevatedButton.icon(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primary,
-                              foregroundColor: Colors.white,
-                              minimumSize: const Size(0, 42),
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            icon: const Icon(Icons.radar_rounded, size: 16),
-                            label: const Text(
-                              'Live Track',
-                              style: TextStyle(fontSize: 13),
-                            ),
-                            onPressed: onTrackTrain,
+                        ElevatedButton.icon(
+                          onPressed: onTrackTrain,
+                          icon: const Icon(Icons.radar_rounded, size: 14),
+                          label: const Text('Track Live Status'),
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                            minimumSize: const Size(0, 36),
                           ),
                         ),
-                      if (onCancel != null) ...[
-                        const SizedBox(width: AppSpacing.xs),
-                        Expanded(
-                          child: OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: AppColors.error,
-                              side: BorderSide(
-                                  color: AppColors.error.withOpacity(0.5)),
-                              minimumSize: const Size(0, 42),
-                              padding: const EdgeInsets.symmetric(horizontal: 8),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            onPressed: onCancel,
-                            child: const Text(
-                              'Cancel',
-                              style: TextStyle(fontSize: 12),
-                            ),
-                          ),
-                        ),
-                      ],
                     ],
                   ),
                 ],
@@ -381,74 +260,24 @@ class TicketPassCard extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoBlock(String label, String value, {bool isHighlighted = false}) {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 9,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textMuted,
-            ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: isHighlighted ? AppColors.secondaryLight : AppColors.textPrimary,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTearOffSeparator() {
-    return Row(
+  Widget _buildInfoBlock(BuildContext context, String label, String value) {
+    return Column(
       children: [
-        Container(
-          width: 12,
-          height: 12,
-          decoration: const BoxDecoration(
-            color: AppColors.background,
-            shape: BoxShape.circle,
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 9,
+            fontWeight: FontWeight.w700,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            letterSpacing: 0.5,
           ),
         ),
-        Expanded(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              const dashWidth = 5.0;
-              const dashSpace = 4.0;
-              final dashCount =
-                  (constraints.constrainWidth() / (dashWidth + dashSpace)).floor();
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: List.generate(dashCount, (_) {
-                  return const SizedBox(
-                    width: dashWidth,
-                    height: 1,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(color: AppColors.borderHighlight),
-                    ),
-                  );
-                }),
-              );
-            },
-          ),
-        ),
-        Container(
-          width: 12,
-          height: 12,
-          decoration: const BoxDecoration(
-            color: AppColors.background,
-            shape: BoxShape.circle,
+        const SizedBox(height: 2),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w800,
           ),
         ),
       ],
