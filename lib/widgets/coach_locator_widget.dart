@@ -24,7 +24,7 @@ class CoachLocatorWidget extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.border, width: 1.2),
+          border: Border.all(color: AppColors.border, width: 1),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,15 +43,15 @@ class CoachLocatorWidget extends StatelessWidget {
                       ),
                       child: const Icon(
                         Icons.view_column_rounded,
-                        size: 18,
+                        size: 16,
                         color: AppColors.secondary,
                       ),
                     ),
                     const SizedBox(width: AppSpacing.xs + 2),
                     const Text(
-                      'Coach Layout & Position',
+                      'Coach Layout',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 15,
                         fontWeight: FontWeight.bold,
                         color: AppColors.textPrimary,
                       ),
@@ -60,8 +60,8 @@ class CoachLocatorWidget extends StatelessWidget {
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.sm,
-                    vertical: 5,
+                    horizontal: 8,
+                    vertical: 4,
                   ),
                   decoration: BoxDecoration(
                     color: AppColors.surfaceContainerHigh,
@@ -73,14 +73,14 @@ class CoachLocatorWidget extends StatelessWidget {
                     children: [
                       const Icon(
                         Icons.meeting_room_outlined,
-                        size: 14,
+                        size: 13,
                         color: AppColors.secondary,
                       ),
                       const SizedBox(width: 4),
                       Text(
                         'Platform $platform',
                         style: const TextStyle(
-                          fontSize: 12,
+                          fontSize: 11,
                           fontWeight: FontWeight.bold,
                           color: AppColors.secondary,
                         ),
@@ -95,17 +95,17 @@ class CoachLocatorWidget extends StatelessWidget {
 
             // Locomotive Direction Hint
             Row(
-              children: [
-                const Icon(
+              children: const [
+                Icon(
                   Icons.arrow_forward_rounded,
-                  size: 14,
+                  size: 13,
                   color: AppColors.textMuted,
                 ),
-                const SizedBox(width: 4),
-                const Expanded(
+                SizedBox(width: 4),
+                Expanded(
                   child: Text(
-                    'Train movement: Left ➔ Right (Engine at head). Tap any coach for details:',
-                    style: TextStyle(fontSize: 12, color: AppColors.textMuted),
+                    'Engine towards Right ➔ (Tap any coach to view details)',
+                    style: TextStyle(fontSize: 11, color: AppColors.textMuted),
                   ),
                 ),
               ],
@@ -115,15 +115,15 @@ class CoachLocatorWidget extends StatelessWidget {
 
             // Scrollable Coach Rake Visualizer
             SizedBox(
-              height: 64,
+              height: 58,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: coaches.length,
                 separatorBuilder: (context, i) => Container(
-                  width: 8,
+                  width: 6,
                   alignment: Alignment.center,
                   child: Container(
-                    height: 3,
+                    height: 2,
                     color: AppColors.borderHighlight,
                   ),
                 ),
@@ -139,10 +139,11 @@ class CoachLocatorWidget extends StatelessWidget {
                         ? 'Coach $coach, your booked coach'
                         : 'Coach $coach',
                     child: InkWell(
-                      onTap: () => _showCoachDetailSheet(context, coach, isSelected),
+                      onTap: () =>
+                          _showCoachDetailSheet(context, coach, isSelected),
                       borderRadius: BorderRadius.circular(10),
                       child: Container(
-                        width: 58,
+                        width: 54,
                         decoration: BoxDecoration(
                           color: isSelected
                               ? AppColors.primary
@@ -152,41 +153,37 @@ class CoachLocatorWidget extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
                             color: isSelected
-                                ? AppColors.secondary
-                                : AppColors.borderHighlight,
-                            width: isSelected ? 2.2 : 1,
+                                ? AppColors.secondaryLight
+                                : AppColors.border,
+                            width: isSelected ? 1.5 : 1,
                           ),
-                          boxShadow: isSelected
-                              ? [
-                                  BoxShadow(
-                                    color: AppColors.primary.withOpacity(0.5),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ]
-                              : null,
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
-                              isLoco
-                                  ? Icons.electric_bolt_rounded
-                                  : (isSelected
-                                      ? Icons.airline_seat_recline_extra_rounded
-                                      : Icons.airline_seat_recline_normal_rounded),
-                              size: 18,
-                              color: isSelected
-                                  ? Colors.white
-                                  : (isLoco
-                                      ? AppColors.tertiary
-                                      : AppColors.textSecondary),
-                            ),
-                            const SizedBox(height: 3),
+                            if (isSelected)
+                              const Icon(
+                                Icons.person_pin_circle_rounded,
+                                size: 14,
+                                color: Colors.white,
+                              )
+                            else if (isLoco)
+                              const Icon(
+                                Icons.power_rounded,
+                                size: 13,
+                                color: AppColors.textMuted,
+                              )
+                            else
+                              const Icon(
+                                Icons.airline_seat_recline_normal_rounded,
+                                size: 13,
+                                color: AppColors.textMuted,
+                              ),
+                            const SizedBox(height: 2),
                             Text(
                               coach,
                               style: TextStyle(
-                                fontSize: 13,
+                                fontSize: 11,
                                 fontWeight: FontWeight.bold,
                                 color: isSelected
                                     ? Colors.white
@@ -202,61 +199,42 @@ class CoachLocatorWidget extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: AppSpacing.md),
+            const SizedBox(height: AppSpacing.sm),
 
-            // Platform Facilities Guide (Accessibility Focus)
-            Container(
-              padding: const EdgeInsets.all(AppSpacing.sm),
-              decoration: BoxDecoration(
-                color: AppColors.surfaceContainerLow,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.border),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: AppColors.secondaryContainer.withOpacity(0.4),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Icon(
-                      Icons.accessibility_new_rounded,
-                      size: 18,
-                      color: AppColors.secondary,
-                    ),
-                  ),
-                  const SizedBox(width: AppSpacing.sm),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Coach $highlightedCoach Accessibility Guide:',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          'Halts approx. 95m from Center FOB (Foot Over Bridge #2). Escalator A & Wheelchair Ramp access direct to coach doorway.',
-                          style: const TextStyle(
-                            fontSize: 11,
-                            color: AppColors.textSecondary,
-                            height: 1.35,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+            // Simplified Legend
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildLegendItem(AppColors.primary, 'Your Coach ($highlightedCoach)'),
+                const SizedBox(width: AppSpacing.md),
+                _buildLegendItem(AppColors.surfaceContainerLow, 'Regular Coach'),
+              ],
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildLegendItem(Color color, String text) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(2),
+            border: Border.all(color: AppColors.borderHighlight, width: 0.8),
+          ),
+        ),
+        const SizedBox(width: 4),
+        Text(
+          text,
+          style: const TextStyle(fontSize: 10, color: AppColors.textMuted),
+        ),
+      ],
     );
   }
 
@@ -266,7 +244,7 @@ class CoachLocatorWidget extends StatelessWidget {
       context: context,
       backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
         return Padding(
@@ -285,13 +263,13 @@ class CoachLocatorWidget extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: isYourCoach
                               ? AppColors.primary
-                              : AppColors.surfaceContainerHigh,
+                              : AppColors.primaryContainer,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Icon(
                           Icons.train_rounded,
                           color: isYourCoach ? Colors.white : AppColors.secondary,
-                          size: 22,
+                          size: 20,
                         ),
                       ),
                       const SizedBox(width: AppSpacing.sm),
@@ -299,56 +277,55 @@ class CoachLocatorWidget extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Coach $coach Details',
+                            'Coach $coach',
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: AppColors.textPrimary,
                             ),
                           ),
-                          if (isYourCoach)
-                            const Text(
-                              'YOUR BOOKED COACH',
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.secondary,
-                              ),
+                          Text(
+                            isYourCoach
+                                ? 'Your Booked Coach'
+                                : 'Standard Air-Conditioned Coach',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: isYourCoach
+                                  ? AppColors.secondary
+                                  : AppColors.textMuted,
+                              fontWeight: FontWeight.w600,
                             ),
+                          ),
                         ],
                       ),
                     ],
                   ),
                   IconButton(
-                    icon: const Icon(Icons.close, color: AppColors.textMuted),
+                    icon: const Icon(Icons.close_rounded,
+                        color: AppColors.textMuted),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],
               ),
               const SizedBox(height: AppSpacing.md),
               const Divider(color: AppColors.border),
-              const SizedBox(height: AppSpacing.sm),
-              _buildCoachFeatureItem(
-                icon: Icons.electrical_services_rounded,
-                title: 'Charging Points',
-                subtitle: 'Individual 220V AC & USB fast-charge sockets at every berth',
-              ),
-              _buildCoachFeatureItem(
-                icon: Icons.wc_rounded,
-                title: 'Bio-Vacuum Toilets',
-                subtitle: 'Accessible washrooms located at both ends of coach',
-              ),
-              _buildCoachFeatureItem(
-                icon: Icons.ac_unit_rounded,
-                title: 'Climate Control',
-                subtitle: 'Maintained at 22°C with automated fresh-air cycles',
-              ),
-              _buildCoachFeatureItem(
-                icon: Icons.emergency_rounded,
-                title: 'Emergency Exit',
-                subtitle: 'Emergency windows located near berths 19, 20 & 43, 44',
-              ),
               const SizedBox(height: AppSpacing.md),
+              _buildCoachFeatureRow(Icons.meeting_room_outlined, 'Platform Position',
+                  'Mid-train on Platform $platform'),
+              const SizedBox(height: AppSpacing.xs),
+              _buildCoachFeatureRow(Icons.power_outlined, 'Charging Ports',
+                  'Available at every seat (220V + USB-C)'),
+              const SizedBox(height: AppSpacing.xs),
+              _buildCoachFeatureRow(Icons.accessible_outlined, 'Accessibility',
+                  'Wheelchair-friendly wide doors'),
+              const SizedBox(height: AppSpacing.lg),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Close'),
+                ),
+              ),
             ],
           ),
         );
@@ -356,17 +333,12 @@ class CoachLocatorWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildCoachFeatureItem({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-  }) {
+  Widget _buildCoachFeatureRow(IconData icon, String title, String description) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 18, color: AppColors.secondary),
+          Icon(icon, size: 16, color: AppColors.secondary),
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Column(
@@ -375,16 +347,15 @@ class CoachLocatorWidget extends StatelessWidget {
                 Text(
                   title,
                   style: const TextStyle(
-                    fontSize: 13,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: 2),
                 Text(
-                  subtitle,
+                  description,
                   style: const TextStyle(
-                    fontSize: 12,
+                    fontSize: 11,
                     color: AppColors.textSecondary,
                   ),
                 ),

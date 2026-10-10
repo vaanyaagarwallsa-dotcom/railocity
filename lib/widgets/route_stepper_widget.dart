@@ -37,15 +37,15 @@ class RouteStepperWidget extends StatelessWidget {
                     ),
                     child: const Icon(
                       Icons.timeline_rounded,
-                      size: 18,
+                      size: 16,
                       color: AppColors.secondary,
                     ),
                   ),
                   const SizedBox(width: AppSpacing.xs + 2),
                   const Text(
-                    'Route Halts & Telemetry',
+                    'Route Timeline',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 15,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
                     ),
@@ -55,7 +55,7 @@ class RouteStepperWidget extends StatelessWidget {
               Text(
                 '${train.stops.length} halts • ${train.source.code} ➔ ${train.destination.code}',
                 style: const TextStyle(
-                  fontSize: 12,
+                  fontSize: 11,
                   color: AppColors.textMuted,
                   fontWeight: FontWeight.w600,
                 ),
@@ -84,7 +84,7 @@ class RouteStepperWidget extends StatelessWidget {
                     'Station ${stop.station.name}, ${isPassed ? "Departed" : (isCurrentTrainStop ? "Current Train Location" : "Upcoming Halt")}. Scheduled arrival ${stop.actualArrival} at Platform ${stop.platform}.',
                 child: InkWell(
                   onTap: () => onStationTap(stop.station),
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(12),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 2.0),
                     child: Row(
@@ -92,7 +92,7 @@ class RouteStepperWidget extends StatelessWidget {
                       children: [
                         // Timeline Column (Dot & connecting line)
                         SizedBox(
-                          width: 36,
+                          width: 32,
                           child: Column(
                             children: [
                               _buildTimelineNode(
@@ -102,13 +102,13 @@ class RouteStepperWidget extends StatelessWidget {
                               ),
                               if (!isLast)
                                 Container(
-                                  width: 3,
-                                  height: 58,
+                                  width: 2,
+                                  height: 48,
                                   decoration: BoxDecoration(
                                     color: isPassed
-                                        ? AppColors.success.withOpacity(0.6)
+                                        ? AppColors.success.withOpacity(0.5)
                                         : AppColors.borderHighlight,
-                                    borderRadius: BorderRadius.circular(2),
+                                    borderRadius: BorderRadius.circular(1),
                                   ),
                                 ),
                             ],
@@ -121,152 +121,121 @@ class RouteStepperWidget extends StatelessWidget {
                           child: Container(
                             margin: const EdgeInsets.only(bottom: AppSpacing.sm),
                             padding: const EdgeInsets.symmetric(
-                              horizontal: AppSpacing.md,
+                              horizontal: AppSpacing.sm + 2,
                               vertical: AppSpacing.sm,
                             ),
                             decoration: BoxDecoration(
                               color: isBoardingStation
-                                  ? AppColors.primaryContainer.withOpacity(0.35)
+                                  ? AppColors.primaryContainer.withOpacity(0.3)
                                   : (isCurrentTrainStop
                                       ? AppColors.surfaceContainerHigh
                                       : AppColors.surface),
-                              borderRadius: BorderRadius.circular(14),
+                              borderRadius: BorderRadius.circular(12),
                               border: Border.all(
                                 color: isBoardingStation
                                     ? AppColors.secondary
                                     : (isCurrentTrainStop
-                                        ? AppColors.primaryLight
+                                        ? AppColors.primaryLight.withOpacity(0.5)
                                         : AppColors.border),
-                                width: isBoardingStation ? 1.8 : 1.2,
+                                width: isBoardingStation ? 1.4 : 1,
                               ),
                             ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            child: Row(
                               children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        stop.station.name,
-                                        style: TextStyle(
-                                          fontWeight: isBoardingStation
-                                              ? FontWeight.bold
-                                              : FontWeight.w600,
-                                          fontSize: 14,
-                                          color: isPassed
-                                              ? AppColors.textMuted
-                                              : AppColors.textPrimary,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Flexible(
+                                            child: Text(
+                                              stop.station.name,
+                                              style: TextStyle(
+                                                fontWeight: isBoardingStation
+                                                    ? FontWeight.bold
+                                                    : FontWeight.w600,
+                                                fontSize: 13,
+                                                color: isPassed
+                                                    ? AppColors.textMuted
+                                                    : AppColors.textPrimary,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Text(
+                                            '(${stop.station.code})',
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.w700,
+                                              color: isBoardingStation
+                                                  ? AppColors.secondary
+                                                  : AppColors.textMuted,
+                                            ),
+                                          ),
+                                          if (isBoardingStation) ...[
+                                            const SizedBox(width: 6),
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(
+                                                horizontal: 6,
+                                                vertical: 2,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: AppColors.secondaryContainer,
+                                                borderRadius: BorderRadius.circular(6),
+                                              ),
+                                              child: const Text(
+                                                'YOUR BOARDING',
+                                                style: TextStyle(
+                                                  fontSize: 9,
+                                                  fontWeight: FontWeight.w800,
+                                                  color: AppColors.secondaryLight,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ],
                                       ),
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 6,
-                                        vertical: 2,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.surfaceContainerHighest,
-                                        borderRadius: BorderRadius.circular(6),
-                                      ),
-                                      child: Text(
-                                        stop.station.code,
+                                      const SizedBox(height: 3),
+                                      Text(
+                                        'Platform ${stop.platform} • ${stop.distanceKm.toInt()} km',
                                         style: const TextStyle(
                                           fontSize: 11,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.textSecondary,
+                                          color: AppColors.textMuted,
                                         ),
                                       ),
-                                    ),
-                                    const SizedBox(width: 6),
-                                    if (isBoardingStation)
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 8,
-                                          vertical: 3,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: AppColors.secondaryContainer,
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                          border: Border.all(
-                                            color: AppColors.secondary,
-                                            width: 1,
-                                          ),
-                                        ),
-                                        child: const Text(
-                                          'YOUR BOARDING',
-                                          style: TextStyle(
-                                            color: AppColors.secondary,
-                                            fontSize: 9,
-                                            fontWeight: FontWeight.w900,
-                                            letterSpacing: 0.4,
-                                          ),
-                                        ),
-                                      ),
-                                    if (isCurrentTrainStop && !isBoardingStation)
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 8,
-                                          vertical: 3,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: AppColors.warningContainer,
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                          border: Border.all(
-                                            color: AppColors.warning,
-                                            width: 1,
-                                          ),
-                                        ),
-                                        child: const Text(
-                                          'TRAIN HERE',
-                                          style: TextStyle(
-                                            color: AppColors.warning,
-                                            fontSize: 9,
-                                            fontWeight: FontWeight.w900,
-                                            letterSpacing: 0.4,
-                                          ),
-                                        ),
-                                      ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                                const SizedBox(height: 6),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
-                                    Row(
-                                      children: [
-                                        Icon(
-                                          Icons.access_time_rounded,
-                                          size: 13,
-                                          color: isBoardingStation
-                                              ? AppColors.secondary
-                                              : AppColors.textMuted,
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          'Arr: ${stop.actualArrival} (PF ${stop.platform})',
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: isBoardingStation
-                                                ? FontWeight.bold
-                                                : FontWeight.w500,
-                                            color: isBoardingStation
-                                                ? AppColors.secondary
-                                                : AppColors.textSecondary,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
                                     Text(
-                                      '${stop.distanceKm.toInt()} km',
-                                      style: const TextStyle(
-                                        fontSize: 12,
+                                      stop.actualArrival,
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: isPassed
+                                            ? AppColors.textMuted
+                                            : AppColors.textPrimary,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      isPassed
+                                          ? 'Departed'
+                                          : (isCurrentTrainStop
+                                              ? 'At Station'
+                                              : 'Dep ${stop.actualDeparture}'),
+                                      style: TextStyle(
+                                        fontSize: 10,
                                         fontWeight: FontWeight.w600,
-                                        color: AppColors.textMuted,
+                                        color: isPassed
+                                            ? AppColors.textMuted
+                                            : (isCurrentTrainStop
+                                                ? AppColors.secondary
+                                                : AppColors.textSecondary),
                                       ),
                                     ),
                                   ],
@@ -297,60 +266,63 @@ class RouteStepperWidget extends StatelessWidget {
         width: 22,
         height: 22,
         decoration: BoxDecoration(
-          color: AppColors.primary,
+          color: AppColors.secondary,
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.white, width: 2.5),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withOpacity(0.6),
-              blurRadius: 10,
+              color: AppColors.secondary.withOpacity(0.5),
+              blurRadius: 8,
               spreadRadius: 2,
             ),
           ],
         ),
-        child: const Center(
-          child: Icon(Icons.train_rounded, size: 12, color: Colors.white),
+        child: const Icon(
+          Icons.train_rounded,
+          size: 13,
+          color: Colors.black,
         ),
       );
     }
+
     if (isBoarding) {
       return Container(
         width: 20,
         height: 20,
         decoration: BoxDecoration(
-          color: AppColors.secondary,
+          color: AppColors.primary,
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.white, width: 2.5),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.secondary.withOpacity(0.5),
-              blurRadius: 8,
-            ),
-          ],
+          border: Border.all(color: AppColors.secondary, width: 2),
         ),
-        child: const Center(
-          child: Icon(Icons.pin_drop_rounded, size: 10, color: Colors.black),
+        child: const Icon(
+          Icons.location_on_rounded,
+          size: 11,
+          color: Colors.white,
         ),
       );
     }
+
     if (isPassed) {
       return Container(
         width: 16,
         height: 16,
-        decoration: const BoxDecoration(
-          color: AppColors.success,
+        decoration: BoxDecoration(
+          color: AppColors.success.withOpacity(0.2),
           shape: BoxShape.circle,
+          border: Border.all(color: AppColors.success, width: 1.5),
         ),
-        child: const Center(
-          child: Icon(Icons.check_rounded, size: 11, color: Colors.white),
+        child: const Icon(
+          Icons.check_rounded,
+          size: 10,
+          color: AppColors.success,
         ),
       );
     }
+
     return Container(
       width: 14,
       height: 14,
       decoration: BoxDecoration(
-        color: AppColors.surfaceContainerHighest,
+        color: AppColors.surfaceContainerLow,
         shape: BoxShape.circle,
         border: Border.all(color: AppColors.borderHighlight, width: 2),
       ),

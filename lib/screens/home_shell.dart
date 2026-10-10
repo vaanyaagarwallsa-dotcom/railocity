@@ -66,7 +66,7 @@ class _HomeShellState extends State<HomeShell> {
         decoration: const BoxDecoration(
           color: AppColors.surface,
           border: Border(
-            top: BorderSide(color: AppColors.border, width: 1.2),
+            top: BorderSide(color: AppColors.border, width: 1),
           ),
         ),
         child: NavigationBar(
@@ -74,31 +74,31 @@ class _HomeShellState extends State<HomeShell> {
           onDestinationSelected: _switchTab,
           backgroundColor: AppColors.surface,
           indicatorColor: AppColors.primaryContainer,
-          elevation: 4,
+          elevation: 0,
           destinations: [
             const NavigationDestination(
               icon: Icon(Icons.radar_outlined),
               selectedIcon: Icon(Icons.radar_rounded, color: AppColors.secondary),
-              label: 'Live Boarding',
-              tooltip: 'Live Train Arrival & Boarding Countdown',
+              label: 'Live Tracker',
+              tooltip: 'Live Train Arrival & Countdown',
             ),
             const NavigationDestination(
               icon: Icon(Icons.calendar_month_outlined),
               selectedIcon:
                   Icon(Icons.calendar_month_rounded, color: AppColors.secondary),
               label: 'Schedules',
-              tooltip: 'Train Schedules & Station Departure Board',
+              tooltip: 'Train Schedules & Station Board',
             ),
             NavigationDestination(
               icon: Badge(
                 backgroundColor: AppColors.secondary,
-                smallSize: 8,
+                smallSize: 6,
                 child: const Icon(Icons.smart_toy_outlined),
               ),
               selectedIcon: const Icon(Icons.smart_toy_rounded,
                   color: AppColors.secondary),
               label: 'Railo AI',
-              tooltip: 'Automated Booking & Railway Intelligence Agent',
+              tooltip: 'Automated Booking & Intelligence',
             ),
             NavigationDestination(
               icon: AnimatedBuilder(
@@ -119,7 +119,7 @@ class _HomeShellState extends State<HomeShell> {
               selectedIcon: const Icon(Icons.confirmation_number_rounded,
                   color: AppColors.secondary),
               label: 'My Trips',
-              tooltip: 'Digital Train Passes & Active Bookings',
+              tooltip: 'Digital Passes & Bookings',
             ),
           ],
         ),

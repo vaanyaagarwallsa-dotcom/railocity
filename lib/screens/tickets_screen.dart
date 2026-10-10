@@ -48,12 +48,29 @@ class _TicketsScreenState extends State<TicketsScreen>
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text(
-              'My Trips & Passes',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                letterSpacing: -0.2,
-              ),
+            title: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(7),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryContainer,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(
+                    Icons.confirmation_number_rounded,
+                    color: AppColors.secondary,
+                    size: 18,
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                const Text(
+                  'My Trips & Passes',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: -0.2,
+                  ),
+                ),
+              ],
             ),
             actions: [
               IconButton(
@@ -61,6 +78,7 @@ class _TicketsScreenState extends State<TicketsScreen>
                 icon: const Icon(
                   Icons.add_circle_outline_rounded,
                   color: AppColors.secondary,
+                  size: 22,
                 ),
                 onPressed: widget.onNavigateToAI,
               ),
@@ -69,19 +87,19 @@ class _TicketsScreenState extends State<TicketsScreen>
               controller: _tabController,
               indicatorColor: AppColors.secondary,
               indicatorSize: TabBarIndicatorSize.tab,
-              indicatorWeight: 3,
+              indicatorWeight: 2.5,
               labelColor: AppColors.secondary,
               unselectedLabelColor: AppColors.textMuted,
               labelStyle:
                   const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
               tabs: [
                 Tab(
-                  text: 'Upcoming Trips (${bookings.length})',
-                  icon: const Icon(Icons.confirmation_number_rounded, size: 18),
+                  text: 'Upcoming (${bookings.length})',
+                  icon: const Icon(Icons.confirmation_number_outlined, size: 16),
                 ),
                 const Tab(
-                  text: 'Past Journeys (0)',
-                  icon: Icon(Icons.history_rounded, size: 18),
+                  text: 'Past Journeys',
+                  icon: Icon(Icons.history_rounded, size: 16),
                 ),
               ],
             ),
@@ -96,7 +114,7 @@ class _TicketsScreenState extends State<TicketsScreen>
                       padding: const EdgeInsets.all(AppSpacing.md),
                       itemCount: bookings.length,
                       separatorBuilder: (context, index) =>
-                          const SizedBox(height: AppSpacing.lg),
+                          const SizedBox(height: AppSpacing.md),
                       itemBuilder: (context, index) {
                         final b = bookings[index];
                         return TicketPassCard(
@@ -125,10 +143,6 @@ class _TicketsScreenState extends State<TicketsScreen>
     );
   }
 
-  /// Empty State adhering to Slide 19:
-  /// 1. Explain the situation
-  /// 2. Give context
-  /// 3. Suggest the next action
   Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: SingleChildScrollView(
@@ -141,55 +155,40 @@ class _TicketsScreenState extends State<TicketsScreen>
               decoration: BoxDecoration(
                 color: AppColors.surfaceContainerLow,
                 shape: BoxShape.circle,
-                border: Border.all(color: AppColors.borderHighlight, width: 1.5),
+                border: Border.all(color: AppColors.borderHighlight, width: 1),
               ),
               child: const Icon(
                 Icons.confirmation_number_outlined,
-                size: 56,
+                size: 48,
                 color: AppColors.secondary,
               ),
             ),
-            const SizedBox(height: AppSpacing.lg),
+            const SizedBox(height: AppSpacing.md),
             const Text(
-              'No Active Trips Yet',
+              'No Active Trips',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: AppSpacing.xs),
             ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 320),
+              constraints: const BoxConstraints(maxWidth: 300),
               child: const Text(
-                'When you book a ticket or ask Railo AI to reserve a berth, your digital boarding pass will appear here with live PNR status.',
+                'When you book a ticket or ask Railo AI to reserve a berth, your digital pass will appear here.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 13,
                   color: AppColors.textSecondary,
-                  height: 1.45,
+                  height: 1.4,
                 ),
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
             ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
-                minimumSize: const Size(220, 48),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.lg,
-                  vertical: AppSpacing.sm + 2,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-              ),
-              icon: const Icon(Icons.auto_awesome_rounded, size: 18),
-              label: const Text(
-                'Book with Railo AI',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-              ),
+              icon: const Icon(Icons.smart_toy_rounded, size: 18),
+              label: const Text('Book with Railo AI'),
               onPressed: widget.onNavigateToAI,
             ),
           ],
@@ -210,10 +209,11 @@ class _TicketsScreenState extends State<TicketsScreen>
               decoration: BoxDecoration(
                 color: AppColors.surfaceContainerLow,
                 shape: BoxShape.circle,
+                border: Border.all(color: AppColors.border),
               ),
               child: const Icon(
-                Icons.history_rounded,
-                size: 48,
+                Icons.history_toggle_off_rounded,
+                size: 40,
                 color: AppColors.textMuted,
               ),
             ),
@@ -221,19 +221,15 @@ class _TicketsScreenState extends State<TicketsScreen>
             const Text(
               'No Past Journeys',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: AppSpacing.xs),
             const Text(
-              'Completed train trips and archived tickets will be stored here.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 13,
-                color: AppColors.textSecondary,
-              ),
+              'Completed train journeys will be archived here.',
+              style: TextStyle(fontSize: 12, color: AppColors.textMuted),
             ),
           ],
         ),
@@ -241,11 +237,10 @@ class _TicketsScreenState extends State<TicketsScreen>
     );
   }
 
-  /// Error Prevention & Recovery Pattern (Slide 32 & Slide 14)
   void _showCancelDialog(BuildContext context, Booking booking) {
     showDialog(
       context: context,
-      builder: (dialogContext) {
+      builder: (ctx) {
         return AlertDialog(
           backgroundColor: AppColors.surface,
           shape: RoundedRectangleBorder(
@@ -254,15 +249,12 @@ class _TicketsScreenState extends State<TicketsScreen>
           ),
           title: Row(
             children: const [
-              Icon(Icons.warning_amber_rounded, color: AppColors.warning),
+              Icon(Icons.warning_amber_rounded,
+                  color: AppColors.error, size: 22),
               SizedBox(width: 8),
               Text(
-                'Cancel Ticket?',
-                style: TextStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                'Cancel Booking?',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -271,40 +263,31 @@ class _TicketsScreenState extends State<TicketsScreen>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Are you sure you want to cancel PNR ${booking.pnrChunked} (${booking.trainName})?',
-                style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                'Are you sure you want to cancel ticket for ${booking.passengerName} on ${booking.trainName}?',
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: AppColors.textSecondary,
+                ),
               ),
-              const SizedBox(height: AppSpacing.md),
+              const SizedBox(height: AppSpacing.sm),
               Container(
-                padding: const EdgeInsets.all(AppSpacing.sm),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: AppColors.surfaceContainerLow,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Row(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Estimated Refund:',
-                          style: TextStyle(fontSize: 12, color: AppColors.textMuted),
-                        ),
-                        Text(
-                          '₹${(booking.fare - 120).toInt()}',
-                          style: const TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.success,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      'Standard IRCTC cancellation fee: ₹120. Refund processed in 24 hrs.',
-                      style: TextStyle(fontSize: 11, color: AppColors.textMuted),
+                    const Icon(Icons.currency_rupee_rounded,
+                        size: 16, color: AppColors.success),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Refund: ₹${(booking.fare * 0.9).toInt()} will be credited',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.success,
+                      ),
                     ),
                   ],
                 ),
@@ -313,61 +296,25 @@ class _TicketsScreenState extends State<TicketsScreen>
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: const Text(
-                'Keep Ticket',
-                style: TextStyle(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Keep Ticket'),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.error,
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
               ),
               onPressed: () {
                 widget.bookingService.cancelBooking(booking.pnr);
-                Navigator.pop(dialogContext);
-
-                // Provide instant feedback + Undo option (User Control / Recovery)
+                Navigator.pop(ctx);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(
-                      'Booking PNR ${booking.pnrChunked} was cancelled.',
-                    ),
-                    action: SnackBarAction(
-                      label: 'UNDO',
-                      textColor: AppColors.secondary,
-                      onPressed: () {
-                        // Re-create the booking
-                        widget.bookingService.createBooking(
-                          train: widget.railwayService
-                                  .getTrainByNumber(booking.trainNumber) ??
-                              widget.railwayService.trains.first,
-                          sourceStation: booking.sourceStation,
-                          destinationStation: booking.destinationStation,
-                          travelDate: booking.travelDate,
-                          seatClass: booking.seatClass,
-                          passengerName: booking.passengerName,
-                          passengerAge: booking.passengerAge,
-                          passengerGender: booking.passengerGender,
-                          preferredBerth: booking.berthType,
-                        );
-                      },
-                    ),
-                    duration: const Duration(seconds: 4),
+                    content: Text('Booking for PNR ${booking.pnr} cancelled.'),
+                    backgroundColor: AppColors.surfaceContainerHigh,
                   ),
                 );
               },
-              child: const Text(
-                'Confirm Cancellation',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
+              child: const Text('Confirm Cancellation'),
             ),
           ],
         );

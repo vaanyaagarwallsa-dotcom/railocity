@@ -64,15 +64,15 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
             title: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(7),
                   decoration: BoxDecoration(
                     gradient: AppColors.primaryGradient,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Icon(
                     Icons.smart_toy_rounded,
                     color: Colors.white,
-                    size: 20,
+                    size: 18,
                   ),
                 ),
                 const SizedBox(width: AppSpacing.sm),
@@ -82,7 +82,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
                     const Text(
                       'Railo AI Companion',
                       style: TextStyle(
-                        fontSize: 17,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: AppColors.textPrimary,
                         letterSpacing: -0.2,
@@ -91,20 +91,20 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
                     Row(
                       children: [
                         Container(
-                          width: 7,
-                          height: 7,
+                          width: 6,
+                          height: 6,
                           decoration: const BoxDecoration(
                             color: AppColors.success,
                             shape: BoxShape.circle,
                           ),
                         ),
-                        const SizedBox(width: 5),
+                        const SizedBox(width: 4),
                         const Text(
-                          'Autonomous Booking & Intelligence',
+                          'Online • Ready to assist',
                           style: TextStyle(
                             fontSize: 10,
                             color: AppColors.secondary,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
@@ -119,6 +119,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
                 icon: const Icon(
                   Icons.help_outline_rounded,
                   color: AppColors.textSecondary,
+                  size: 20,
                 ),
                 onPressed: () => _showAgentCapabilitiesModal(context),
               ),
@@ -142,7 +143,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
                 ),
               ),
 
-              // Bottom suggestion chips row (Hick's Law: 4-5 curated options)
+              // Bottom suggestion chips row
               _buildSuggestedChipsBar(),
 
               // Input bar
@@ -158,7 +159,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
     final isUser = msg.sender == MessageSender.user;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: Column(
         crossAxisAlignment:
             isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
@@ -170,14 +171,14 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
             children: [
               if (!isUser) ...[
                 Container(
-                  padding: const EdgeInsets.all(6),
+                  padding: const EdgeInsets.all(5),
                   decoration: const BoxDecoration(
                     color: AppColors.primaryContainer,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
                     Icons.auto_awesome_rounded,
-                    size: 14,
+                    size: 13,
                     color: AppColors.secondary,
                   ),
                 ),
@@ -187,23 +188,23 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.md,
-                    vertical: AppSpacing.sm + 2,
+                    vertical: 10,
                   ),
                   decoration: BoxDecoration(
                     color: isUser
                         ? AppColors.primary
                         : AppColors.surfaceContainerLow,
                     borderRadius: BorderRadius.only(
-                      topLeft: const Radius.circular(18),
-                      topRight: const Radius.circular(18),
-                      bottomLeft: Radius.circular(isUser ? 18 : 4),
-                      bottomRight: Radius.circular(isUser ? 4 : 18),
+                      topLeft: const Radius.circular(16),
+                      topRight: const Radius.circular(16),
+                      bottomLeft: Radius.circular(isUser ? 16 : 4),
+                      bottomRight: Radius.circular(isUser ? 4 : 16),
                     ),
                     border: Border.all(
                       color: isUser
-                          ? AppColors.primaryLight
+                          ? AppColors.primaryLight.withOpacity(0.5)
                           : AppColors.borderHighlight,
-                      width: 1.2,
+                      width: 1,
                     ),
                   ),
                   child: msg.isThinking
@@ -211,18 +212,18 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: const [
                             SizedBox(
-                              width: 14,
-                              height: 14,
+                              width: 13,
+                              height: 13,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
                                 color: AppColors.secondary,
                               ),
                             ),
-                            SizedBox(width: 10),
+                            SizedBox(width: 8),
                             Text(
-                              'Querying IRCTC inventory & telemetry...',
+                              'Thinking & finding best options...',
                               style: TextStyle(
-                                fontSize: 13,
+                                fontSize: 12,
                                 color: AppColors.textSecondary,
                               ),
                             ),
@@ -231,8 +232,8 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
                       : Text(
                           msg.text,
                           style: TextStyle(
-                            fontSize: 14,
-                            height: 1.45,
+                            fontSize: 13,
+                            height: 1.4,
                             color: isUser
                                 ? Colors.white
                                 : AppColors.textPrimary,
@@ -247,14 +248,14 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
           // Autonomous Agent Reasoning Steps Accordion
           if (msg.reasoningSteps != null && msg.reasoningSteps!.isNotEmpty)
             Container(
-              margin: const EdgeInsets.only(top: 8, left: 32),
+              margin: const EdgeInsets.only(top: 6, left: 28),
               padding: const EdgeInsets.all(AppSpacing.sm),
               decoration: BoxDecoration(
                 color: AppColors.surfaceContainerLow,
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: AppColors.primary.withOpacity(0.4),
-                  width: 1.2,
+                  color: AppColors.primary.withOpacity(0.3),
+                  width: 1,
                 ),
               ),
               child: Column(
@@ -264,12 +265,12 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
                     children: const [
                       Icon(
                         Icons.check_circle_rounded,
-                        size: 14,
+                        size: 13,
                         color: AppColors.secondary,
                       ),
-                      SizedBox(width: 6),
+                      SizedBox(width: 5),
                       Text(
-                        'Autonomous Execution Flow:',
+                        'Agent Steps:',
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
@@ -278,10 +279,10 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 4),
                   ...msg.reasoningSteps!.map(
                     (step) => Padding(
-                      padding: const EdgeInsets.only(bottom: 4.0),
+                      padding: const EdgeInsets.only(bottom: 2.0),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -296,7 +297,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
                             child: Text(
                               step,
                               style: const TextStyle(
-                                fontSize: 12,
+                                fontSize: 11,
                                 color: AppColors.textSecondary,
                               ),
                             ),
@@ -312,7 +313,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
           // Embedded Digital Ticket Card for Instant Confirmation
           if (msg.bookingCard != null)
             Padding(
-              padding: const EdgeInsets.only(top: 10, left: 24),
+              padding: const EdgeInsets.only(top: 8, left: 20),
               child: TicketPassCard(
                 booking: msg.bookingCard!,
                 onTrackTrain: widget.onNavigateToLive,
@@ -322,10 +323,10 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
           // Suggested Action Chips inside message
           if (msg.suggestedChips.isNotEmpty && !isUser)
             Padding(
-              padding: const EdgeInsets.only(top: 8, left: 24),
+              padding: const EdgeInsets.only(top: 6, left: 20),
               child: Wrap(
                 spacing: 6,
-                runSpacing: 6,
+                runSpacing: 4,
                 children: msg.suggestedChips.map((chip) {
                   return ActionChip(
                     backgroundColor: AppColors.surfaceContainerHigh,
@@ -334,8 +335,8 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
                       chip,
                       style: const TextStyle(
                         fontSize: 11,
-                        color: AppColors.secondary,
-                        fontWeight: FontWeight.bold,
+                        color: AppColors.secondaryLight,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                     onPressed: () => _sendMessage(chip),
@@ -354,37 +355,36 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
       '⏱️ Train arrival countdown',
       '🚉 Platform for Coach B3',
       '⚠️ Route delays check',
-      '🍽️ Pantry food menu',
     ];
 
     return Container(
-      height: 48,
+      height: 42,
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: chips.length,
-        separatorBuilder: (context, index) => const SizedBox(width: 8),
+        separatorBuilder: (context, index) => const SizedBox(width: 6),
         itemBuilder: (context, i) {
           return InkWell(
             onTap: () => _sendMessage(chips[i]),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(16),
             child: Container(
               padding: const EdgeInsets.symmetric(
                 horizontal: AppSpacing.sm,
-                vertical: 8,
+                vertical: 6,
               ),
               decoration: BoxDecoration(
                 color: AppColors.surfaceContainerLow,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppColors.borderHighlight),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.border),
               ),
               child: Center(
                 child: Text(
                   chips[i],
                   style: const TextStyle(
-                    fontSize: 12,
+                    fontSize: 11,
                     color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
@@ -399,11 +399,11 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.md,
-        vertical: AppSpacing.sm,
+        vertical: AppSpacing.xs + 2,
       ),
       decoration: const BoxDecoration(
         color: AppColors.surface,
-        border: Border(top: BorderSide(color: AppColors.border, width: 1.2)),
+        border: Border(top: BorderSide(color: AppColors.border, width: 1)),
       ),
       child: SafeArea(
         child: Row(
@@ -413,21 +413,21 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
                 controller: _inputController,
                 textInputAction: TextInputAction.send,
                 onSubmitted: isProcessing ? null : (_) => _sendMessage(),
-                style: const TextStyle(color: Colors.white, fontSize: 14),
+                style: const TextStyle(color: Colors.white, fontSize: 13),
                 decoration: InputDecoration(
                   hintText: 'Ask Railo AI or say "Book ticket to Mumbai"...',
                   hintStyle: const TextStyle(
                     color: AppColors.textMuted,
-                    fontSize: 13,
+                    fontSize: 12,
                   ),
                   filled: true,
                   fillColor: AppColors.surfaceContainerLow,
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.md,
-                    vertical: 12,
+                    vertical: 10,
                   ),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24),
+                    borderRadius: BorderRadius.circular(20),
                     borderSide: const BorderSide(color: AppColors.border),
                   ),
                 ),
@@ -443,15 +443,15 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
                 tooltip: 'Send prompt',
                 icon: isProcessing
                     ? const SizedBox(
-                        width: 18,
-                        height: 18,
+                        width: 16,
+                        height: 16,
                         child: CircularProgressIndicator(
                           color: Colors.white,
                           strokeWidth: 2,
                         ),
                       )
                     : const Icon(Icons.send_rounded,
-                        color: Colors.white, size: 18),
+                        color: Colors.white, size: 16),
                 onPressed: isProcessing ? null : () => _sendMessage(),
               ),
             ),
@@ -466,7 +466,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
       context: context,
       backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
         return Padding(
@@ -478,7 +478,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
               Text(
                 'Railo AI Capabilities',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
                 ),
@@ -491,13 +491,13 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
                   'Automated 1-Click Ticket Booking',
                   style: TextStyle(
                     color: AppColors.textPrimary,
-                    fontSize: 14,
+                    fontSize: 13,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 subtitle: Text(
                   'Parses natural language, checks quota, allocates seats, and confirms PNRs.',
-                  style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                  style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
                 ),
               ),
               ListTile(
@@ -507,13 +507,13 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
                   'Live ETA & Boarding Countdown',
                   style: TextStyle(
                     color: AppColors.textPrimary,
-                    fontSize: 14,
+                    fontSize: 13,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 subtitle: Text(
                   'Calculates down to the second when your train pulls into your platform.',
-                  style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                  style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
                 ),
               ),
               ListTile(
@@ -524,13 +524,13 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
                   'Platform & Coach Positioning',
                   style: TextStyle(
                     color: AppColors.textPrimary,
-                    fontSize: 14,
+                    fontSize: 13,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 subtitle: Text(
                   'Guides you to exact platform positions relative to station bridges, lifts, and escalators.',
-                  style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                  style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
                 ),
               ),
             ],
