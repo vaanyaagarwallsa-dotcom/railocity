@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/railway_service.dart';
 import '../theme/app_theme.dart';
 
-class LiveCountdownCard extends StatelessWidget {
+class LiveCountdownCard extends StatefulWidget {
   final RailwayService railwayService;
   final VoidCallback onSelectStation;
   final VoidCallback onSelectTrain;
@@ -15,238 +15,411 @@ class LiveCountdownCard extends StatelessWidget {
   });
 
   @override
+  State<LiveCountdownCard> createState() => _LiveCountdownCardState();
+}
+
+class _LiveCountdownCardState extends State<LiveCountdownCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _pulseController;
+  late Animation<double> _pulseAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..repeat(reverse: true);
+    _pulseAnimation = Tween<double>(begin: 0.85, end: 1.25).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final train = railwayService.activeTrackedTrain;
-    final boardingStation = railwayService.userBoardingStation;
-    final countdown = railwayService.formattedCountdownToBoarding;
+    final train = widget.railwayService.activeTrackedTrain;
+    final boardingStation = widget.railwayService.userBoardingStation;
+    final countdown = widget.railwayService.formattedCountdownToBoarding;
     final stop = train?.getStopForStation(boardingStation.code);
     final platform = stop?.platform ?? 2;
     final delay = train?.delayMinutes ?? 0;
+    final isDelayed = delay > 0;
 
-    return Container(
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF1E1B4B), Color(0xFF0F172A)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: AppColors.primaryLight.withOpacity(0.3),
-          width: 1.5,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withOpacity(0.2),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
+    return Semantics(
+      label:
+          'Live train arrival countdown card. Train ${train?.trainNumber ?? ''} ${train?.trainName ?? ''}. Arriving in $countdown at platform $platform.',
+      container: true,
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: isDelayed
+                ? AppColors.warning.withOpacity(0.5)
+                : AppColors.primaryLight.withOpacity(0.4),
+            width: 1.5,
           ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          // Background ambient graphic
-          Positioned(
-            right: -20,
-            bottom: -20,
-            child: Icon(
-              Icons.train_rounded,
-              size: 160,
-              color: Colors.white.withOpacity(0.03),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.4),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Top Header: Active Train & Switcher
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    InkWell(
-                      onTap: onSelectTrain,
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppColors.surfaceContainerLow,
+                  AppColors.surface,
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 1. TOP BAR: Train Selector + Live GPS Badge
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Interactive Train Selector (Affordance & Fitts's Law)
+                      InkWell(
+                        onTap: widget.onSelectTrain,
+                        borderRadius: BorderRadius.circular(12),
+                        child: Container(
+                          constraints: const BoxConstraints(minHeight: 44),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.sm,
+                            vertical: AppSpacing.xs,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.surfaceContainerHigh,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: AppColors.borderHighlight,
+                              width: 1.2,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.train_rounded,
+                                size: 18,
+                                color: AppColors.secondary,
+                              ),
+                              const SizedBox(width: AppSpacing.xs),
+                              ConstrainedBox(
+                                constraints: const BoxConstraints(maxWidth: 160),
+                                child: Text(
+                                  train != null
+                                      ? '${train.trainNumber} • ${train.trainName}'
+                                      : 'Select Train',
+                                  style: const TextStyle(
+                                    color: AppColors.textPrimary,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 13,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              const Icon(
+                                Icons.keyboard_arrow_down_rounded,
+                                size: 20,
+                                color: AppColors.textSecondary,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      // Live Pulsing GPS Indicator (Visual state feedback)
+                      AnimatedBuilder(
+                        animation: _pulseAnimation,
+                        builder: (context, child) {
+                          return Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSpacing.sm,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.success.withOpacity(0.12),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: AppColors.success.withOpacity(0.5),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Transform.scale(
+                                  scale: _pulseAnimation.value,
+                                  child: Container(
+                                    width: 8,
+                                    height: 8,
+                                    decoration: const BoxDecoration(
+                                      color: AppColors.success,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: AppSpacing.xs),
+                                const Text(
+                                  'LIVE GPS',
+                                  style: TextStyle(
+                                    color: AppColors.success,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w800,
+                                    letterSpacing: 0.6,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: AppSpacing.md),
+
+                  // 2. BOARDING STATION ROW (Clarity: what is the current context)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.sm,
+                      vertical: AppSpacing.xs + 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.surfaceContainerLow,
                       borderRadius: BorderRadius.circular(12),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      border: Border.all(color: AppColors.border),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.location_on_rounded,
+                          size: 18,
+                          color: AppColors.secondary,
+                        ),
+                        const SizedBox(width: AppSpacing.xs),
+                        Text(
+                          'Boarding Station:',
+                          style: TextStyle(
+                            color: AppColors.textMuted,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.xs),
+                        Expanded(
+                          child: Text(
+                            '${boardingStation.name} (${boardingStation.code})',
+                            style: const TextStyle(
+                              color: AppColors.textPrimary,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        InkWell(
+                          onTap: widget.onSelectStation,
+                          borderRadius: BorderRadius.circular(8),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryContainer.withOpacity(0.5),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: const [
+                                Text(
+                                  'Change',
+                                  style: TextStyle(
+                                    color: AppColors.secondaryLight,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(width: 2),
+                                Icon(
+                                  Icons.edit_rounded,
+                                  size: 12,
+                                  color: AppColors.secondaryLight,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: AppSpacing.md),
+
+                  // 3. CENTRAL COUNTDOWN & PUNCTUALITY BADGE
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Large, High-Contrast Tabular Figures Countdown
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'ARRIVES IN',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.8,
+                                color: AppColors.textMuted,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              countdown,
+                              style: const TextStyle(
+                                fontSize: 36,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: -0.5,
+                                color: AppColors.textPrimary,
+                                fontFeatures: [FontFeature.tabularFigures()],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Status Badge (Color + Icon + Text for Accessibility)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.sm,
+                          vertical: AppSpacing.xs,
+                        ),
                         decoration: BoxDecoration(
-                          color: AppColors.primary.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColors.primaryLight.withOpacity(0.4)),
+                          color: isDelayed
+                              ? AppColors.warningContainer.withOpacity(0.8)
+                              : AppColors.successContainer.withOpacity(0.8),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: isDelayed
+                                ? AppColors.warning
+                                : AppColors.success,
+                            width: 1.2,
+                          ),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.directions_railway_filled, size: 16, color: AppColors.accent),
+                            Icon(
+                              isDelayed
+                                  ? Icons.warning_amber_rounded
+                                  : Icons.check_circle_rounded,
+                              size: 16,
+                              color: isDelayed
+                                  ? AppColors.warning
+                                  : AppColors.success,
+                            ),
                             const SizedBox(width: 6),
                             Text(
-                              train != null ? '${train.trainNumber} • ${train.trainName}' : 'Select Train',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 13,
+                              isDelayed ? '+$delay min delay' : 'On-Time',
+                              style: TextStyle(
+                                color: isDelayed
+                                    ? AppColors.warning
+                                    : AppColors.success,
+                                fontWeight: FontWeight.w800,
+                                fontSize: 12,
                               ),
                             ),
-                            const SizedBox(width: 4),
-                            const Icon(Icons.arrow_drop_down, size: 18, color: AppColors.textSecondary),
                           ],
                         ),
                       ),
-                    ),
-                    // Live Pulse Indicator
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: AppColors.success.withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: AppColors.success.withOpacity(0.4)),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 8,
-                            height: 8,
-                            decoration: const BoxDecoration(
-                              color: AppColors.success,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          const Text(
-                            'LIVE GPS',
-                            style: TextStyle(
-                              color: AppColors.success,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 16),
-
-                // Boarding Station Header
-                Row(
-                  children: [
-                    const Icon(Icons.pin_drop_rounded, size: 16, color: AppColors.secondary),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        'Boarding Station:',
-                        style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    InkWell(
-                      onTap: onSelectStation,
-                      borderRadius: BorderRadius.circular(8),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              '${boardingStation.name} (${boardingStation.code})',
-                              style: const TextStyle(
-                                color: AppColors.secondary,
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(width: 2),
-                            const Icon(Icons.edit_location_alt_rounded, size: 14, color: AppColors.secondary),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 12),
-
-                // Central Countdown Display
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
-                  children: [
-                    Text(
-                      countdown,
-                      style: const TextStyle(
-                        fontSize: 38,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: -1,
-                        color: Colors.white,
-                        fontFeatures: [FontFeature.tabularFigures()],
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: delay > 0 ? AppColors.warning.withOpacity(0.2) : AppColors.success.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        delay > 0 ? '+${delay}m delay' : 'On-Time',
-                        style: TextStyle(
-                          color: delay > 0 ? AppColors.warning : AppColors.success,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 4),
-
-                Text(
-                  train?.currentLocationDescription ?? 'In transit',
-                  style: TextStyle(
-                    color: Colors.grey.shade400,
-                    fontSize: 13,
+                    ],
                   ),
-                ),
 
-                const SizedBox(height: 16),
-                const Divider(color: Colors.white12, height: 1),
-                const SizedBox(height: 14),
+                  const SizedBox(height: AppSpacing.xs),
 
-                // Telemetry Badges: Platform, Speed, Next Halt
-                Row(
-                  children: [
-                    _buildTelemetryBadge(
-                      icon: Icons.meeting_room_rounded,
-                      label: 'Platform',
-                      value: 'PF $platform',
-                      valueColor: AppColors.accent,
-                    ),
-                    const SizedBox(width: 12),
-                    _buildTelemetryBadge(
-                      icon: Icons.speed_rounded,
-                      label: 'Current Speed',
-                      value: '${train?.currentSpeedKmph ?? 0} km/h',
-                      valueColor: AppColors.secondary,
-                    ),
-                    const SizedBox(width: 12),
-                    _buildTelemetryBadge(
-                      icon: Icons.airline_seat_recline_extra_rounded,
-                      label: 'Coach Guide',
-                      value: 'B3 near FOB #2',
-                      valueColor: AppColors.textPrimary,
-                    ),
-                  ],
-                ),
-              ],
+                  // Location telemetry line
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.navigation_rounded,
+                        size: 14,
+                        color: AppColors.secondary,
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          train?.currentLocationDescription ?? 'In transit',
+                          style: const TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: AppSpacing.md),
+                  const Divider(color: AppColors.border, height: 1),
+                  const SizedBox(height: AppSpacing.md),
+
+                  // 4. TELEMETRY BADGES (Platform, Speed, Coach Berth)
+                  Row(
+                    children: [
+                      _buildTelemetryBadge(
+                        icon: Icons.meeting_room_rounded,
+                        label: 'Boarding Platform',
+                        value: 'Platform $platform',
+                        highlightColor: AppColors.secondary,
+                        accessibleHint: 'Boarding at Platform $platform',
+                      ),
+                      const SizedBox(width: AppSpacing.xs),
+                      _buildTelemetryBadge(
+                        icon: Icons.speed_rounded,
+                        label: 'Speed Telemetry',
+                        value: '${train?.currentSpeedKmph ?? 0} km/h',
+                        highlightColor: AppColors.info,
+                        accessibleHint: 'Current train speed ${train?.currentSpeedKmph ?? 0} kilometers per hour',
+                      ),
+                      const SizedBox(width: AppSpacing.xs),
+                      _buildTelemetryBadge(
+                        icon: Icons.accessible_forward_rounded,
+                        label: 'Station Access',
+                        value: 'Lift & FOB #2',
+                        highlightColor: AppColors.primaryLight,
+                        accessibleHint: 'Elevators and Foot Over Bridge available',
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -255,41 +428,56 @@ class LiveCountdownCard extends StatelessWidget {
     required IconData icon,
     required String label,
     required String value,
-    required Color valueColor,
+    required Color highlightColor,
+    required String accessibleHint,
   }) {
     return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.04),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.white.withOpacity(0.06)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(icon, size: 14, color: AppColors.textSecondary),
-                const SizedBox(width: 4),
-                Text(
-                  label,
-                  style: const TextStyle(fontSize: 10, color: AppColors.textMuted),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: valueColor,
+      child: Semantics(
+        label: '$label: $value. $accessibleHint',
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.xs,
+            vertical: AppSpacing.sm,
+          ),
+          decoration: BoxDecoration(
+            color: AppColors.surfaceContainer,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(icon, size: 14, color: highlightColor),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      label,
+                      style: const TextStyle(
+                        fontSize: 10,
+                        color: AppColors.textMuted,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+              const SizedBox(height: 4),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
         ),
       ),
     );

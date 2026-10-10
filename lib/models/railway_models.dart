@@ -5,12 +5,20 @@ class Station {
   final String name;
   final String city;
   final int platforms;
+  final bool hasWheelchairAccess;
+  final bool hasEscalators;
+  final bool hasElevators;
+  final bool hasBrailleSignage;
 
   const Station({
     required this.code,
     required this.name,
     required this.city,
     this.platforms = 8,
+    this.hasWheelchairAccess = true,
+    this.hasEscalators = true,
+    this.hasElevators = true,
+    this.hasBrailleSignage = true,
   });
 
   @override
@@ -32,6 +40,7 @@ class TrainStop {
   final double distanceKm;
   TrainStatus status;
   int delayMinutes;
+  final String delayReason;
 
   TrainStop({
     required this.station,
@@ -43,6 +52,7 @@ class TrainStop {
     required this.distanceKm,
     this.status = TrainStatus.scheduled,
     this.delayMinutes = 0,
+    this.delayReason = '',
   });
 }
 
@@ -60,6 +70,10 @@ class SeatClass {
     required this.availableSeats,
     required this.statusText,
   });
+
+  bool get isConfirmed => statusText.toUpperCase().contains('AVAILABLE');
+  bool get isRAC => statusText.toUpperCase().contains('RAC');
+  bool get isWL => statusText.toUpperCase().contains('WL');
 }
 
 class Train {
@@ -157,6 +171,14 @@ class Booking {
     this.status = 'CONFIRMED',
     this.platform = 3,
   });
+
+  /// Miller's Law (Slide 18): Chunking 10-digit PNR into easily memorizable blocks: 284 - 910 - 4821
+  String get pnrChunked {
+    if (pnr.length >= 10) {
+      return '${pnr.substring(0, 3)} - ${pnr.substring(3, 6)} - ${pnr.substring(6)}';
+    }
+    return pnr;
+  }
 }
 
 enum MessageSender { user, ai, system }
